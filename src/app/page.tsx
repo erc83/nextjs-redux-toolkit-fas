@@ -1,27 +1,27 @@
 "use client"  
 import {useAppDispatch, useAppSelector  } from "@/redux/hooks"; 
 
-
-// estas funciones son las qu tengo que utilizar para el increment y el decrement
 import { increment, decrement  } from "@/redux/features/counterSlice";
+import { useGetUsersQuery, useGetUsersByIdQuery } from '@/redux/services/userApi'
 
 const HomePage = () => {
 
   const count = useAppSelector(state => state.counterReducer.counter)   
-  /* para ejecutarla useAppDispatch */
-  // me da una constante disptach = 
-  // lo bueno que gracias a los hooks que se han creado
-  // el dispatch nos permitira ejecutar funciones que hemos definido antes 
+
+  // vamos a usar el useGetUsersQuery    // que ya esta en el estado
+  // me puede dar los datos, un error, si esta cargando, y si esta haciendo la solicitud
+  const { data, error, isLoading, isFetching } = useGetUsersQuery(null)    // me solicita un argumento pero como no tengo uno para pasarle
+
+  //aplicando unas condicionales 
+  if(isLoading || isFetching ) return <p>Loading...</p>
+  if(error) return <p>Some error</p>
+
   const dispatch = useAppDispatch()
 
   return (
     <div>
       <h1>total: { count } </h1>
-      {/* ahora en el button usaremos una funcion que nos permite incrementar   () => {}   */}
-      {/* esta funcion se llama increment */}
 
-      {/* dispatch que quieres ejecutar, le digo que dispare el incremento que importamos de counterSlice */}
-      {/* increment() es una funcion se ejecuta   */}
       <button
         onClick={() => {
           dispatch(increment())
@@ -30,14 +30,27 @@ const HomePage = () => {
         Increment
       </button>
       <br />
-      {/* aqui el decrement */}
-      <button
-        onClick={() => {
-          dispatch(decrement())
-        }}
-      >
+        <button
+          onClick={() => {
+            dispatch(decrement())
+          }}
+        >
         Decrement
       </button>
+
+
+      {/* recorremos las data */}
+
+      {
+        data?.map( user => (     // el error puede ser que el arreglo este vacio o indefinido  ? si existe recorrelo
+          <div>
+            <p>{user.name}</p>
+            <p>{user.username}</p>
+            <p>{user.email}</p>
+          </div>
+        ))
+      }
+
     </div>
   )
 }
