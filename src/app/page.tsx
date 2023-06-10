@@ -8,50 +8,51 @@ const HomePage = () => {
 
   const count = useAppSelector(state => state.counterReducer.counter)   
 
-  // vamos a usar el useGetUsersQuery    // que ya esta en el estado
-  // me puede dar los datos, un error, si esta cargando, y si esta haciendo la solicitud
-  const { data, error, isLoading, isFetching } = useGetUsersQuery(null)    // me solicita un argumento pero como no tengo uno para pasarle
+  const { data, error, isLoading, isFetching } = useGetUsersQuery(null)   
 
-  //aplicando unas condicionales 
   if(isLoading || isFetching ) return <p>Loading...</p>
   if(error) return <p>Some error</p>
 
   const dispatch = useAppDispatch()
 
   return (
-    <div>
-      <h1>total: { count } </h1>
+    <>
+      <h1 className='text-center text-2xl'>total: { count } </h1>
 
-      <button
-        onClick={() => {
-          dispatch(increment())
-        }}
-      >
-        Increment
-      </button>
-      <br />
+      <div className="flex justify-center gap-x-2 ">
         <button
+          className="bg-green-500 px-3 py-2 rounded-md"
           onClick={() => {
-            dispatch(decrement())
+            dispatch(increment())
           }}
-        >
-        Decrement
-      </button>
+          >
+          Increment
+        </button>
+        <br />
+          <button
+            className="bg-blue-500 px-3 py-2 rounded-md"
+            onClick={() => {
+              dispatch(decrement())
+            }}
+          >
+          Decrement
+        </button>
+      </div>
 
 
-      {/* recorremos las data */}
+      <div className="grid grid-cols-3 mx-auto gap-3">
+        {
+          data?.map( user => (     
+            <div className="bg-zinc-800 p-4"> 
+              <p>{user.name}</p>
+              <p>{user.username}</p>
+              <p>{user.email}</p>
+            </div>
+          ))
+        }
+      </div>
 
-      {
-        data?.map( user => (     // el error puede ser que el arreglo este vacio o indefinido  ? si existe recorrelo
-          <div>
-            <p>{user.name}</p>
-            <p>{user.username}</p>
-            <p>{user.email}</p>
-          </div>
-        ))
-      }
-
-    </div>
+    </>
   )
 }
 
